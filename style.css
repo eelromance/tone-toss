@@ -4,11 +4,29 @@ html, body {
   font-family: Arial, Helvetica, sans-serif;
   background: white;
 }
+
 canvas {
   display: block;
 }
 
 p {
   margin: 1em;
+}
+
+sketchHolder {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#keyguide {
+  width: 1000px;
+  left: 20vw;
+  top: 25vh;
+  position: absolute;
+  z-index: 10;
+  pointer-events: none;
+  opacity: 50%;
 }
 

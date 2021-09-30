@@ -69,6 +69,7 @@ const reverb = new Tone.Reverb({
 
 function setup() { // setup runs once when the program is initialized
   let canvas = createCanvas(windowWidth, windowHeight); // define HTML canvas that p5 draws on
+  canvas.parent('sketchHolder');
   colorMode(HSB); // hue saturation brightness
   engine = Engine.create(); //define engine
   world = engine.world; //define world
@@ -239,6 +240,7 @@ function keyTyped() {
     } else if (key === 'c'){ // voice mode toggle
       voiceToggle = !voiceToggle;
     } else if (key === 'q'){ // toggle GUI
+
       gui.toggleVisibility();
     }
   }
@@ -251,14 +253,14 @@ function draw() { // draw loops every frame
   } else if (!voiceToggle){
   background(bgColorDrums);
   }
-  if (frameCount < 1000){ // displays temporary text that tells user how to open the GUI
+  //if (frameCount < 1000){ // displays temporary text that tells user how to open the GUI
   push();
   colorMode(RGB);
   textSize(windowHeight/40);
-  fill(0, 102, 153, 51);
-  text("settings : q",10,windowHeight/40);
+  fill(0, 102, 153, 100);
+  text("view controls: q",30,50);
   pop();
-}
+//}
   Engine.update(engine, 1000 / 30);   //Update the engine each frame
   reverb.wet.value = reverbWet / 100;  //Updates reverb parameters
   reverb.decay.value = reverbDecay;
