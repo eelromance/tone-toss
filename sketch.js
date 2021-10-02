@@ -55,6 +55,11 @@ var particleSizeMaximumMin = 51;
 var particleSizeMaximumMax = 500;
 var bgColorMelody = '#9DC4F9'; //Bg colors for the two voice modes
 var bgColorDrums = '#1A222C';
+var p = document.getElementById("keyguide"); // get a reference to the keyguide element and cache it
+
+function toggleKeyguide() {
+  p.classList.toggle('hideKeyguide'); // toggle the hideKeyguide class
+}
 
 const keyboard = ['a', 'w', 's', 'e', 'd', 'f', 't', 'g', 'y', 'h', 'u', 'j', 'k', 'o', 'l']; // string arrays of acceptable keyboard piano input
 const keyboardCapital = ['A', 'W', 'S', 'E', 'D', 'F', 'T', 'G', 'Y', 'H', 'U', 'J', 'K', 'O', 'L']; // uppercase version, to make it case insensitive
@@ -240,8 +245,8 @@ function keyTyped() {
     } else if (key === 'c'){ // voice mode toggle
       voiceToggle = !voiceToggle;
     } else if (key === 'q'){ // toggle GUI
-
       gui.toggleVisibility();
+      toggleKeyguide();
     }
   }
   return false;
