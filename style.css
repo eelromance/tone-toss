@@ -20,6 +20,15 @@ sketchHolder {
   align-items: center;
 }
 
+img {
+  pointer-events: none;
+  -khtml-user-select: none;
+  -o-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 #keyguide {
   width: 1000px;
   left: 20vw;
@@ -27,11 +36,6 @@ sketchHolder {
   position: absolute;
   z-index: 10;
   opacity: 0.5;
-  -khtml-user-select: none;
-  -o-user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  user-select: none;
 }
 
 .hideKeyguide {

@@ -40,15 +40,19 @@ class ParticleDrum { //most things are the same here as in particle.js
   
     makeSampler(){ // and instead of a synth we have a sampler
       this.sampler = new Tone.Sampler({
-        "C4" : "samples/kick.wav", // the filepaths of each drum sample
-        "D4" : "samples/snare.wav", // and the notes their assigned to
-        "E4" : "samples/rim.wav",
-        "F4" : "samples/hatc.wav",
-        "G4" : "samples/hato.wav",
-        "A4" : "samples/tomlo.wav",
-        "B4" : "samples/tomhi.wav",
+        "C4" : "samples/01.mp3", // the filepaths of each drum sample
+        "D4" : "samples/02.mp3", // and the notes their assigned to
+        "D#4" : "samples/kethuk1.mp3",
+        "E4" : "samples/03.mp3",
+        "F4" : "samples/04.mp3",
+        "G4" : "samples/05.mp3",
+        "G#4" : "samples/kethuk2.mp3",
+        "A4" : "samples/06.mp3",
+        "A#4" : "samples/kethuk3.mp3",
+        "B4" : "samples/07.mp3",
+        "C#4" : "samples/kethuk4.mp3",
       });
-      this.sampler.connect(this.filter);
+      this.sampler.connect(this.channel);
     }
   
     playOscillator(){ // this functions name is misleading now since we're really triggering a sample, i kept it the same so it works in either voice mode.

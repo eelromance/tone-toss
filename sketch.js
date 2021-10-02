@@ -27,7 +27,7 @@ var particleCount = 0; // keeps track of amount of particles in the screen.
 
 //----- variables for the GUI ------
 var gui; // define gui
-var gravityToggle = true; // boolean for gravity modes 'constant' and 'applied'.
+var gravityToggle = false; // boolean for gravity modes 'constant' and 'applied'.
 var voiceToggle = true; // boolean for voice modes melody and rhythm.
 var Waveform = ['sine','triangle','sawtooth','square','pwm','pulse','fmsine','fmtriangle','fmsawtooth','fmsquare','amsine','amtriangle','amsawtooth','amsquare'];
 var reverbWet = 20; // Reverb mix
@@ -36,14 +36,14 @@ var reverbWetMax = 100;
 var reverbDecay = 3; // Reverb decay time in seconds
 var reverbDecayMin = 0;
 var reverbDecayMax = 10;
-var Lifespan = 600; // Lifespan - how long particles persist (in frames)
+var Lifespan = 800; // Lifespan - how long particles persist (in frames)
 var LifespanMin = 50;
 var LifespanMax = 2000;
 var Bounciness = 0.75; // Bounciness - restitution values for matter.js bodies
 var BouncinessMin = 0;
 var BouncinessMax = 2;
 var BouncinessStep = 0.01;
-var Friction = 0.5; // Friction - friction values for matter.js bodies
+var Friction = 0.3; // Friction - friction values for matter.js bodies
 var FrictionMin = 0;
 var FrictionMax = 1;
 var FrictionStep = 0.01
@@ -84,7 +84,7 @@ function setup() { // setup runs once when the program is initialized
   reverb.generate(); // intialize reverb
 
   gui = createGui('Settings'); // create gui and add the variables
-  gui.addGlobals('gravityToggle', 'voiceToggle','Waveform','reverbWet', 'reverbDecay','Lifespan','Bounciness','Friction','particleSizeMinimum','particleSizeMaximum','bgColorMelody','bgColorDrums');
+  gui.addGlobals('gravityToggle', 'voiceToggle','Waveform','reverbWet', 'reverbDecay','Lifespan','Bounciness','Friction','particleSizeMinimum','particleSizeMaximum');
   gui.hide(); // hide the gui so it can be toggled on later
 
   //Tells matter to listen for collision events, and call the function 'onCollision' when it detects one. It also passes the events' data to that function.
