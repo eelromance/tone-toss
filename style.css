@@ -35,7 +35,7 @@ img {
   top: 25vh;
   position: absolute;
   z-index: 10;
-  opacity: 0.5;
+  opacity: 0.95;
 }
 
 .hideKeyguide {

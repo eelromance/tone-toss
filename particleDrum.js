@@ -52,6 +52,7 @@ class ParticleDrum { //most things are the same here as in particle.js
         "B4" : "samples/07.mp3",
         "C#4" : "samples/kethuk4.mp3",
       });
+      this.sampler.volume.value = -20;
       this.sampler.connect(this.channel);
     }
   
@@ -86,4 +87,3 @@ class ParticleDrum { //most things are the same here as in particle.js
       this.channel.dispose();
     }
   }
-  // I'm ending the comments here. Thanks for reading!

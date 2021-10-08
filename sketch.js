@@ -29,8 +29,9 @@ var particleCount = 0; // keeps track of amount of particles in the screen.
 var gui; // define gui
 var gravityToggle = false; // boolean for gravity modes 'constant' and 'applied'.
 var voiceToggle = true; // boolean for voice modes melody and rhythm.
-var Waveform = ['sine','triangle','sawtooth','square','pwm','pulse','fmsine','fmtriangle','fmsawtooth','fmsquare','amsine','amtriangle','amsawtooth','amsquare'];
-var reverbWet = 20; // Reverb mix
+var Waveform = ['amsine','triangle','sawtooth','square','pwm','pulse','fmsine','fmtriangle','fmsawtooth','fmsquare','sine','amtriangle','amsawtooth','amsquare'];
+var waveformList = ['sine','triangle','sawtooth','square','pwm','pulse','fmsine','fmtriangle','fmsawtooth','fmsquare','amsine','amtriangle','amsawtooth','amsquare'];
+var reverbWet = 30; // Reverb mix
 var reverbWetMin = 0; // quicksettings recognizes 'min' 'max' and 'step' suffixes and automatically applies them to the gui.
 var reverbWetMax = 100;
 var reverbDecay = 3; // Reverb decay time in seconds
@@ -63,6 +64,7 @@ function toggleKeyguide() {
 
 const keyboard = ['a', 'w', 's', 'e', 'd', 'f', 't', 'g', 'y', 'h', 'u', 'j', 'k', 'o', 'l']; // string arrays of acceptable keyboard piano input
 const keyboardCapital = ['A', 'W', 'S', 'E', 'D', 'F', 'T', 'G', 'Y', 'H', 'U', 'J', 'K', 'O', 'L']; // uppercase version, to make it case insensitive
+const surpriseNote = [0, 2, 4, 5, 7, 9, 11, -7, -12, 14];
 
 // Tone.js Master Channel
 const masterChannel = new Tone.Channel().toMaster();
@@ -110,7 +112,7 @@ function setup() { // setup runs once when the program is initialized
   bounds.push(wallR);
 } // END SETUP() --------
 
-// a p5 function for drawing n-gons from a radius.
+// a function for drawing n-gons.
 function polygon(x, y, radius, npoints) {
   let angle = TWO_PI / npoints;
   beginShape();
@@ -128,6 +130,19 @@ function newParticle(key) { // receives 'key' which is the midi note #
   //spawn melody particles by adding a Particle object to the particles array.
   // see particles.js for more info about the constructor
   particles.push(new Particle(random(width / 20, width - width / 20), random(height / 20, height - height / 2), random(particleSizeMinimum, particleSizeMaximum), key, Waveform,Lifespan, Bounciness, Friction));
+  } else if (!voiceToggle){
+  //spawn drum particles by adding a ParticleDrum object to the particles array.
+    particles.push(new ParticleDrum(random(width / 20, width - width / 20), random(height / 20, height - height / 2), random(particleSizeMinimum, particleSizeMaximum), key, Lifespan,Bounciness,Friction));
+  }
+  particleCount += 1; // add to the particleCount tally
+}
+
+// function that spawns particles, called when note input is detected
+function newRandomParticle(key,randomWave) { // receives 'key' which is the midi note #
+  if (voiceToggle){ //if statement checks what voiceMode we're in. True is Melody and False is Drums.
+  //spawn melody particles by adding a Particle object to the particles array.
+  // see particles.js for more info about the constructor
+  particles.push(new Particle(random(width / 20, width - width / 20), random(height / 20, height - height / 2), random(particleSizeMinimum, particleSizeMaximum), key, randomWave, Lifespan, Bounciness, Friction));
   } else if (!voiceToggle){
   //spawn drum particles by adding a ParticleDrum object to the particles array.
     particles.push(new ParticleDrum(random(width / 20, width - width / 20), random(height / 20, height - height / 2), random(particleSizeMinimum, particleSizeMaximum), key, Lifespan,Bounciness,Friction));
@@ -162,7 +177,7 @@ function removeParticle(i) {
     removeCount += 1;
   }
 }
-// dynamically resizes the sketch to the window
+// resizes the sketch to the window
 function windowResized(){
   resizeCanvas(windowWidth,windowHeight);
 }
@@ -216,14 +231,25 @@ function keyTyped() {
     } else if (keyboardCapital.includes(key)) { // the same as before but for capital letters. Fixes the issue of caps lock disabling input.
       let k = keyboardCapital.indexOf(key) + octave * 12 + 12 + transpose;
       newParticle(k);
-    } } else if (!voiceToggle){ // voiceMode FALSE: Drums
+    } else if (key === 'r') { // random note
+      let k = surpriseNote[Math.floor(Math.random()*surpriseNote.length)];
+      console.log(k);
+      let w = waveformList[Math.floor(Math.random()*waveformList.length)]
+    newRandomParticle(k + octave * 12 + 12 + transpose, w);
+  } else if (key === 'R') { // random note CAPS
+    let k = surpriseNote[Math.floor(Math.random()*surpriseNote.length)];
+    console.log(k);
+    let w = waveformList[Math.floor(Math.random()*waveformList.length)]
+  newRandomParticle(k + octave * 12 + 12 + transpose, w);
+}
+  } else if (!voiceToggle){ // voiceMode FALSE: Drums
       if (keyboard.includes(key)) {  // the only difference here is that in Drum mode, the octave value is fixed at 4, so the octave switch will not affect its pitch.
         let k = keyboard.indexOf(key) + 4 * 12 + 12 + transpose;
         newParticle(k);
       } else if (keyboardCapital.includes(key)) {
         let k = keyboardCapital.indexOf(key) + 4 * 12 + 12 + transpose;
         newParticle(k);
-    }}
+    }}}
     // key mapping for other functions
     if (key >= 0 || key <= 9) {
       transpose = Number(key); // semitone transpotiion
@@ -232,9 +258,17 @@ function keyTyped() {
       if (octave < 8) {
         octave += 1; // octave up switch
       }
+    } else if (key === 'X') {
+      if (octave < 8) {
+        octave += 1; // octave up switch CAPS
+      }
     } else if (key === 'z') {
       if (octave > 1) {
-        octave -= 1; // octave down switch
+        octave -= 1; // octave down switch CAPS
+      }
+    } else if (key === 'Z') {
+      if (octave > 1) {
+        octave -= 1; // octave down switch CAPS
       }
     } else if (key === '/') { // gravity mode toggle
       gravityToggle = !gravityToggle;
@@ -244,11 +278,15 @@ function keyTyped() {
       gravityMultiplier -= 0.5;
     } else if (key === 'c'){ // voice mode toggle
       voiceToggle = !voiceToggle;
+    } else if (key === 'C'){ // voice mode toggle CAPS
+      voiceToggle = !voiceToggle;
     } else if (key === 'q'){ // toggle GUI
       gui.toggleVisibility();
       toggleKeyguide();
+    } else if (key === 'Q'){ // toggle GUI CAPS
+      gui.toggleVisibility();
+      toggleKeyguide();
     }
-  }
   return false;
 }
 
@@ -287,4 +325,3 @@ function draw() { // draw loops every frame
     bounds[i].show(); // draw all the boundaries
   }
 }
-// if you're reading the comments linearly, next check out particle.js!
