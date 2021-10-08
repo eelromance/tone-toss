@@ -249,7 +249,14 @@ function keyTyped() {
       } else if (keyboardCapital.includes(key)) {
         let k = keyboardCapital.indexOf(key) + 4 * 12 + 12 + transpose;
         newParticle(k);
-    }}}
+    } else if (key === 'r'){//random drum
+      let k = random(0,11) + 4 * 12 + 12 + transpose;
+      newRandomParticle(k);
+    } else if (key === 'R'){//random drum CAPS
+      let k = random(0,11) + 4 * 12 + 12 + transpose;
+      newRandomParticle(k);
+    }
+  }}
     // key mapping for other functions
     if (key >= 0 || key <= 9) {
       transpose = Number(key); // semitone transpotiion
