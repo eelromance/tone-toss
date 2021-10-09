@@ -40,17 +40,17 @@ class ParticleDrum { //most things are the same here as in particle.js
   
     makeSampler(){ // and instead of a synth we have a sampler
       this.sampler = new Tone.Sampler({
-        "C4" : "samples/snare.wav", // the filepaths of each drum sample
+        "C4" : "samples/01.mp3", // the filepaths of each drum sample
         "D4" : "samples/02.mp3", // and the notes their assigned to
-        "D#4" : "samples/CP.WAV",
-        "E4" : "samples/Claves.wav",
-        "F4" : "samples/mammut3.wav",
-        "G4" : "samples/04.mp3",
-        "G#4" : "samples/rim.wav",
-        "A4" : "samples/06.mp3",
-        "A#4" : "samples/scratch.wav",
-        "B4" : "samples/Whoomp.wav",
-        "C#4" : "samples/CB0.WAV",
+        "D#4" : "samples/03.mp3", 
+        "E4" : "samples/04.mp3",
+        "F4" : "samples/05.mp3",
+        "G4" : "samples/06.mp3",
+        "G#4" : "samples/07.mp3",
+        "A4" : "samples/08.mp3",
+        "A#4" : "samples/09.mp3",
+        "B4" : "samples/10.mp3",
+        "C#4" : "samples/11.mp3",
       });
       this.sampler.volume.value = -20;
       this.sampler.connect(this.channel);
