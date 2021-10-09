@@ -42,14 +42,14 @@ class ParticleDrum { //most things are the same here as in particle.js
       this.sampler = new Tone.Sampler({
         "C4" : "samples/snare.wav", // the filepaths of each drum sample
         "D4" : "samples/02.mp3", // and the notes their assigned to
-        "D#4" : "samples/CP.wav",
+        "D#4" : "samples/CP.WAV",
         "E4" : "samples/Claves.wav",
         "F4" : "samples/mammut3.wav",
         "G4" : "samples/04.mp3",
         "G#4" : "samples/rim.wav",
         "A4" : "samples/06.mp3",
         "A#4" : "samples/scratch.wav",
-        "B4" : "samples/whoomp.wav",
+        "B4" : "samples/Whoomp.wav",
         "C#4" : "samples/CB0.WAV",
       });
       this.sampler.volume.value = -20;
