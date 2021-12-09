@@ -17,17 +17,17 @@ var particles = [];
 var bounds = [];
 var boundMargin = 400;
 
-var removeCount = 0; // Keeps track of amount of particles removed. Unused so far.
-
 var octave = 4; // Octave transposition
 var transpose = 0; // Semitone transposition
+var currentScale = 0;
 
 var particleLimit = 12; // maximum amount of particles allowed on the screen at once.
 var particleCount = 0; // keeps track of amount of particles in the screen.
+var removeCount = 0; // Keeps track of amount of particles removed. Unused so far.
 
 //----- variables for the GUI ------
 var gui; // define gui
-var gravityToggle = false; // boolean for gravity modes 'constant' and 'applied'.
+var gravityToggle = true; // boolean for gravity modes 'constant' and 'applied'.
 var voiceToggle = true; // boolean for voice modes melody and rhythm.
 var Waveform = ['amsine','triangle','sawtooth','square','pwm','pulse','fmsine','fmtriangle','fmsawtooth','fmsquare','sine','amtriangle','amsawtooth','amsquare'];
 var waveformList = ['sine','triangle','sawtooth','square','pwm','pulse','fmsine','fmtriangle','fmsawtooth','fmsquare','amsine','amtriangle','amsawtooth','amsquare'];
@@ -62,9 +62,12 @@ function toggleKeyguide() {
   p.classList.toggle('hideKeyguide'); // toggle the hideKeyguide class
 }
 
-const keyboard = ['a', 'w', 's', 'e', 'd', 'f', 't', 'g', 'y', 'h', 'u', 'j', 'k', 'o', 'l']; // string arrays of acceptable keyboard piano input
-const keyboardCapital = ['A', 'W', 'S', 'E', 'D', 'F', 'T', 'G', 'Y', 'H', 'U', 'J', 'K', 'O', 'L']; // uppercase version, to make it case insensitive
+const keyboard = ['1', '2', '3', '4', '5', '6', '7', '8', '9']; // string arrays of acceptable keyboard piano input
 const surpriseNote = [0, 2, 4, 5, 7, 9, 11, -7, -12, 14];
+const scales = [
+  ['major',[0,2,4,5,7,9,11,12,14,16]],
+  ['minor',[0,2,3,5,7,8,10,12,14,15]]
+]
 
 // Tone.js Master Channel
 const masterChannel = new Tone.Channel().toMaster();
@@ -181,19 +184,38 @@ function removeParticle(i) {
 function windowResized(){
   resizeCanvas(windowWidth,windowHeight);
 }
-// Arrow events for gravity manipulation
+
+function mouseMoved(){
+}
+
+// Arrow / WASD events for gravity manipulation
 function keyPressed() {
+  if (keyCode === 16){
+    currentScale = 1 - currentScale
+  } 
   if (gravityToggle) { // MODE TRUE Constant Gravity
-    if (keyCode === DOWN_ARROW) {
+    if (keyCode === DOWN_ARROW) { // Down arrow or S
       world.gravity.x = 0 * gravityMultiplier;
       world.gravity.y = 1 * gravityMultiplier; // gravity down
-    } else if (keyCode === UP_ARROW) {
+    } else if (keyCode === UP_ARROW) { // Up arrow or W
       world.gravity.x = 0 * gravityMultiplier;
       world.gravity.y = -1 * gravityMultiplier; // gravity up
-    } else if (keyCode === RIGHT_ARROW) {
+    } else if (keyCode === RIGHT_ARROW) { // Right arrow or D
       world.gravity.x = 1 * gravityMultiplier; // gravity right
       world.gravity.y = 0 * gravityMultiplier;
-    } else if (keyCode === LEFT_ARROW) {
+    } else if (keyCode === LEFT_ARROW) { // Left arrow or A
+      world.gravity.x = -1 * gravityMultiplier; // gravity left
+      world.gravity.y = 0 * gravityMultiplier;
+    } else if (keyCode === 83) { // Down arrow or S
+      world.gravity.x = 0 * gravityMultiplier;
+      world.gravity.y = 1 * gravityMultiplier; // gravity down
+    } else if (keyCode === 87) { // Up arrow or W
+      world.gravity.x = 0 * gravityMultiplier;
+      world.gravity.y = -1 * gravityMultiplier; // gravity up
+    } else if (keyCode === 68) { // Right arrow or D
+      world.gravity.x = 1 * gravityMultiplier; // gravity right
+      world.gravity.y = 0 * gravityMultiplier;
+    } else if (keyCode === 65) { // Left arrow or A
       world.gravity.x = -1 * gravityMultiplier; // gravity left
       world.gravity.y = 0 * gravityMultiplier;
     }
@@ -212,6 +234,18 @@ function keyPressed() {
     } else if (keyIsDown(LEFT_ARROW)) {
       world.gravity.x = -1; // gravity left
       world.gravity.y = 0;
+    } else if (keyIsDown(83)) {
+      world.gravity.x = 0;
+      world.gravity.y = 1;  // gravity down
+    } else if (keyIsDown(87)) {
+      world.gravity.x = 0;
+      world.gravity.y = -1; // gravity up
+    } else if (keyIsDown(68)) {
+      world.gravity.x = 1; // gravity right
+      world.gravity.y = 0;
+    } else if (keyIsDown(65)) {
+      world.gravity.x = -1; // gravity left
+      world.gravity.y = 0;
     }
   }
 }
@@ -225,42 +259,39 @@ function keyReleased() { //when keys are released, only for Applied gravity mode
 function keyTyped() {
   if (particleCount < particleLimit) { // only allows newParticle to be called if particleCount is below the limit
     if (voiceToggle){ // voiceMode TRUE: Melody
-    if (keyboard.includes(key)) { // checks that the typed key belongs to the array of 'piano keys' I designated earlier.
-      let k = keyboard.indexOf(key) + octave * 12 + 12 + transpose; //k is the midi note value of our input. Determined by the index of the key we pressed in our keyboard array, plus our transposition values.
+    if (Number(key) <= 9 && Number(key) >=1) { // checks that the typed key belongs to the array of 'piano keys' I designated earlier.
+      let k = scales[currentScale][1][Number(key)-1] + octave * 12 + 12 + (transpose%12); //k is the midi note value of our input. Determined by the index of the key we pressed in our keyboard array, plus our transposition values.
       newParticle(k); // calls newParticle and passes k into it.
-    } else if (keyboardCapital.includes(key)) { // the same as before but for capital letters. Fixes the issue of caps lock disabling input.
-      let k = keyboardCapital.indexOf(key) + octave * 12 + 12 + transpose;
-      newParticle(k);
     } else if (key === 'r') { // random note
       let k = surpriseNote[Math.floor(Math.random()*surpriseNote.length)];
       console.log(k);
       let w = waveformList[Math.floor(Math.random()*waveformList.length)]
-    newRandomParticle(k + octave * 12 + 12 + transpose, w);
+    newRandomParticle(k + octave * 12 + 12 + (transpose%12), w);
   } else if (key === 'R') { // random note CAPS
     let k = surpriseNote[Math.floor(Math.random()*surpriseNote.length)];
     console.log(k);
     let w = waveformList[Math.floor(Math.random()*waveformList.length)]
-  newRandomParticle(k + octave * 12 + 12 + transpose, w);
+  newRandomParticle(k + octave * 12 + 12 + (transpose%12), w);
 }
   } else if (!voiceToggle){ // voiceMode FALSE: Drums
       if (keyboard.includes(key)) {  // the only difference here is that in Drum mode, the octave value is fixed at 4, so the octave switch will not affect its pitch.
-        let k = keyboard.indexOf(key) + 4 * 12 + 12 + transpose;
+        let k = keyboard.indexOf(key) + 4 * 12 + 12;
         newParticle(k);
       } else if (keyboardCapital.includes(key)) {
-        let k = keyboardCapital.indexOf(key) + 4 * 12 + 12 + transpose;
+        let k = keyboardCapital.indexOf(key) + 4 * 12 + 12;
         newParticle(k);
     } else if (key === 'r'){//random drum
-      let k = random(0,11) + 4 * 12 + 12 + transpose;
+      let k = random(0,11) + 4 * 12 + 12;
       newRandomParticle(k);
     } else if (key === 'R'){//random drum CAPS
-      let k = random(0,11) + 4 * 12 + 12 + transpose;
+      let k = random(0,11) + 4 * 12 + 12;
       newRandomParticle(k);
     }
   }}
     // key mapping for other functions
-    if (key >= 0 || key <= 9) {
-      transpose = Number(key); // semitone transpotiion
-    }
+    // if (key >= 0 || key <= 9) {
+    //   transpose = Number(key); // semitone transpotiion
+    // }
     if (key === 'x') {
       if (octave < 8) {
         octave += 1; // octave up switch
@@ -276,21 +307,31 @@ function keyTyped() {
     } else if (key === 'Z') {
       if (octave > 1) {
         octave -= 1; // octave down switch CAPS
-      }
-    } else if (key === '/') { // gravity mode toggle
+      } 
+    } else if (key === 'e') {
+        transpose += 1; // transpose up switch
+    } else if (key === 'E') {
+        transpose += 1; // transpose up switch CAPS
+    } else if (key === 'q') {
+        transpose -= 1; // transpose down switch CAPS
+    } else if (key === 'Q') {
+        transpose -= 1; // transpose down switch CAPS
+    } else if (key === 'f') { // gravity mode toggle
       gravityToggle = !gravityToggle;
-    } else if (key === '.') { // gravity division
+    } else if (key === 'F') { // gravity mode toggle
+      gravityToggle = !gravityToggle;
+    } else if (key === '-') { // gravity division
       gravityMultiplier += 0.5;
-    } else if (key === ',') { // gravity multiplication
+    } else if (key === '=') { // gravity multiplication
       gravityMultiplier -= 0.5;
     } else if (key === 'c'){ // voice mode toggle
       voiceToggle = !voiceToggle;
     } else if (key === 'C'){ // voice mode toggle CAPS
       voiceToggle = !voiceToggle;
-    } else if (key === 'q'){ // toggle GUI
+    } else if (key === 'h'){ // toggle GUI
       gui.toggleVisibility();
       toggleKeyguide();
-    } else if (key === 'Q'){ // toggle GUI CAPS
+    } else if (key === 'H'){ // toggle GUI CAPS
       gui.toggleVisibility();
       toggleKeyguide();
     }
@@ -303,14 +344,14 @@ function draw() { // draw loops every frame
   } else if (!voiceToggle){
   background(bgColorDrums);
   }
-  //if (frameCount < 1000){ // displays temporary text that tells user how to open the GUI
+  if (frameCount < 1000){ // displays temporary text that tells user how to open the GUI
   push();
   colorMode(RGB);
   textSize(windowHeight/40);
   fill(0, 102, 153, 100);
-  text("view controls: q",30,50);
+  text("advanced settings: h",30,50);
   pop();
-//}
+}
   Engine.update(engine, 1000 / 30);   //Update the engine each frame
   reverb.wet.value = reverbWet / 100;  //Updates reverb parameters
   reverb.decay.value = reverbDecay;
